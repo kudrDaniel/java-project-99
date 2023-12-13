@@ -18,10 +18,10 @@ WORKDIR .
 
 COPY . .
 
+USER app
+
 RUN gradle bootJar
 
 ENV PORT=$PORT
 
-RUN chmod -R 666 ./build/libs/app-0.0.1-SNAPSHOT.jar
-
-CMD ./build/libs/app-0.0.1-SNAPSHOT.jar
+ENTRYPOINT ["java","-jar","/build/libs/app-0.0.1-SNAPSHOT.jar"]
