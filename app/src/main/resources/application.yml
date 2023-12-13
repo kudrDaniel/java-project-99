@@ -7,4 +7,4 @@ spring:
     ansi:
       enabled: always
   profiles:
-    default: development
+    active: ${SPRING_ACTIVE_PROFILE:development}
