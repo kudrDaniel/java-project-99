@@ -18,8 +18,8 @@ WORKDIR .
 
 COPY . .
 
-RUN gradle installDist
+RUN gradle bootJar
 
 ENV PORT=$PORT
 
-CMD ./build/install/app/bin/app
+CMD ./build/libs/app-0.0.1-SNAPSHOT.jar
