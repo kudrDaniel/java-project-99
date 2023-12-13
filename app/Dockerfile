@@ -18,8 +18,6 @@ WORKDIR .
 
 COPY . .
 
-USER app
-
 RUN gradle bootJar
 
 ENV PORT=$PORT
