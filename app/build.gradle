@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'checkstyle'
+	id 'jacoco'
+	id 'io.freefair.lombok' version '8.0.1'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'hexlet.code'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '20'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation(
+			'org.springframework.boot:spring-boot-starter',
+			'org.springframework.boot:spring-boot-starter-web',
+			'org.springframework.boot:spring-boot-starter-data-jpa',
+			'org.springframework.boot:spring-boot-starter-validation',
+			'com.h2database:h2:2.2.224',
+			'org.postgresql:postgresql:42.6.0'
+	)
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+checkstyle {
+	toolVersion '9.2.1'
+}
+
+jacoco {
+	toolVersion = "0.8.9"
+}
+
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+	reports {
+		xml.required = true
+	}
+}
