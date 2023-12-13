@@ -4,3 +4,11 @@ spring:
     name: "task_manager"
     username: "app"
     password: "password"
+
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem
+
+defauth:
+  email: classpath:defauth/email
+  password: classpath:defauth/password

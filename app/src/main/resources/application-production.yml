@@ -4,3 +4,11 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+rsa:
+  public-key: ${RSA_PUBLIC}
+  private-key: ${RSA_PRIVATE}
+
+defauth:
+  email: ${ADMIN_EMAIL}
+  password: ${ADMIN_PASS}
