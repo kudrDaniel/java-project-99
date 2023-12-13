@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: "jdbc:h2:mem:app"
+    username: "app"
+    password: "password"
+
+rsa:
+  public-key: ${RSA_PUBLIC}
+  private-key: ${RSA_PRIVATE}
+
+defauth:
+  email: ${ADMIN_EMAIL}
+  password: ${ADMIN_PASS}
