@@ -22,4 +22,6 @@ RUN gradle bootJar
 
 ENV PORT=$PORT
 
+RUN chmod -R 777 ./build/libs/app-0.0.1-SNAPSHOT.jar
+
 CMD ./build/libs/app-0.0.1-SNAPSHOT.jar
