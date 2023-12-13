@@ -9,5 +9,5 @@ rsa:
   private-key: classpath:certs/private.pem
 
 defauth:
-  email: classpath:defauth/email
-  password: classpath:defauth/password
+  email: "hexlet@example.com"
+  password: "qwerty"
