@@ -6,8 +6,8 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 rsa:
-  public-key: classpath:${RSA_PUBLIC_PATH}
-  private-key: classpath:${RSA_PRIVATE_PATH}
+  public-key: ${RSA_PUBLIC}
+  private-key: ${RSA_PRIVATE}
 
 defauth:
   email: ${ADMIN_EMAIL}
