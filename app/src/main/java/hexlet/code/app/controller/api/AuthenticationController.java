@@ -1,18 +1,19 @@
-package hexlet.code.app.controller;
+package hexlet.code.app.controller.api;
 
 import hexlet.code.app.dto.AuthRequest;
+import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.utils.JwtUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api")
+@Slf4j
 public class AuthenticationController {
     @Autowired
     private JwtUtils jwtUtils;
@@ -20,11 +21,17 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("")
+    @Autowired
+    private UserRepository userRepository;
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.CREATED)
     public String create(@RequestBody AuthRequest authRequest) {
         var authentication = new UsernamePasswordAuthenticationToken(
                 authRequest.getUsername(), authRequest.getPassword());
+
         authenticationManager.authenticate(authentication);
+
         return jwtUtils.generateToken(authRequest.getUsername());
     }
 }

@@ -3,9 +3,12 @@ package hexlet.code.app.service;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
+import hexlet.code.app.exception.EmailAlreadyExistException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.UserMapper;
+import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +31,14 @@ public class UserService {
 
     public UserDTO findById(Long id) {
         var model = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
         return userMapper.map(model);
     }
 
     public UserDTO create(UserCreateDTO dto) {
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new EmailAlreadyExistException(dto.getEmail());
+        }
         var model = userMapper.map(dto);
         userRepository.save(model);
         return userMapper.map(model);
@@ -40,7 +46,7 @@ public class UserService {
 
     public UserDTO update(UserUpdateDTO dto, Long id) {
         var model = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
         userMapper.update(dto, model);
         userRepository.save(model);
         return userMapper.map(model);
