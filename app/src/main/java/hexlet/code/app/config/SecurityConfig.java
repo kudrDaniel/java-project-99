@@ -40,9 +40,10 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/", "/index.html").permitAll()
                         .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers("/api/login").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(rs -> rs.jwt(jwt -> jwt.decoder(jwtDecoder)))
