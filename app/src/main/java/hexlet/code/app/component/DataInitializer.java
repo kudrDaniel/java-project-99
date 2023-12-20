@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -24,6 +25,9 @@ public class DataInitializer implements ApplicationRunner {
     @Autowired
     private final DefaultAuthProperties auths;
 
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         initUsers();
@@ -31,12 +35,13 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initUsers() {
-        if (userRepository.existByEmail(auths.getEmail())) {
+        if (userRepository.existsByEmail(auths.getEmail())) {
             return;
         }
         var user = new User();
         user.setEmail(auths.getEmail());
-        user.setPassword(auths.getPassword());
+        var hashedPassword = passwordEncoder.encode(auths.getPassword());
+        user.setPassword(hashedPassword);
         userRepository.save(user);
     }
 
