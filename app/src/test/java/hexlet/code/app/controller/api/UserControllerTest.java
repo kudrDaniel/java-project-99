@@ -44,6 +44,8 @@ public class UserControllerTest {
 
     private User testUser;
 
+    private final String rootURI = "/api/users";
+
     @BeforeEach
     public void setup() {
         token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
@@ -59,19 +61,19 @@ public class UserControllerTest {
     }
 
     @Test
-    public void indexTest() throws Exception {
-        mockMvc.perform(get("/api/users").with(token))
+    public void testIndex() throws Exception {
+        mockMvc.perform(get(rootURI).with(token))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/users"))
+        mockMvc.perform(get(rootURI))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void showTest() throws Exception {
+    public void testShow() throws Exception {
         var id = testUser.getId();
 
-        var response = mockMvc.perform(get("/api/users/" + id).with(token))
+        var response = mockMvc.perform(get(rootURI + "/" + id).with(token))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertThat(response.getContentAsString())
@@ -79,57 +81,52 @@ public class UserControllerTest {
                 .contains(testUser.getFirstName())
                 .contains(testUser.getLastName());
 
-        mockMvc.perform(get("/api/users/" + id))
+        mockMvc.perform(get(rootURI + "/" + id))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void createTest() throws Exception {
-        var createUser = Instancio.of(modelGenerator.getUserModel())
+    public void testCreate() throws Exception {
+        var user1 = Instancio.of(modelGenerator.getUserModel())
                 .create();
-        var testUserCreateDto = new UserCreateDTO();
-        testUserCreateDto.setFirstName(createUser.getFirstName());
-        testUserCreateDto.setLastName(createUser.getLastName());
-        testUserCreateDto.setEmail(createUser.getEmail());
-        testUserCreateDto.setPassword(createUser.getPassword());
-        createUser = userMapper.map(testUserCreateDto);
-
-        var request = post("/api/users")
+        var user1CreateDTO = new UserCreateDTO();
+        user1CreateDTO.setFirstName(user1.getFirstName());
+        user1CreateDTO.setLastName(user1.getLastName());
+        user1CreateDTO.setEmail(user1.getEmail());
+        user1CreateDTO.setPassword(user1.getPassword());
+        var request = post(rootURI)
                 .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(createUser));
+                .content(om.writeValueAsString(user1CreateDTO));
         mockMvc.perform(request)
-                .andExpect(status().isCreated())
-                .andReturn();
-        var user = userRepository.findByEmail(createUser.getEmail());
+                .andExpect(status().isCreated());
+        var user = userRepository.findByEmail(user1.getEmail());
         assertThat(user).isNotEmpty();
 
-        createUser = Instancio.of(modelGenerator.getUserModel())
+        user1 = Instancio.of(modelGenerator.getUserModel())
                 .create();
-        testUserCreateDto.setFirstName(createUser.getFirstName());
-        testUserCreateDto.setLastName(createUser.getLastName());
-        testUserCreateDto.setEmail("");
-        testUserCreateDto.setPassword(createUser.getPassword());
-        createUser = userMapper.map(testUserCreateDto);
+        user1CreateDTO.setFirstName(user1.getFirstName());
+        user1CreateDTO.setLastName(user1.getLastName());
+        user1CreateDTO.setEmail("");
+        user1CreateDTO.setPassword(user1.getPassword());
         request = request
-                .content(om.writeValueAsBytes(createUser));
+                .content(om.writeValueAsBytes(user1CreateDTO));
         mockMvc.perform(request)
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        user = userRepository.findByEmail(createUser.getEmail());
+                .andExpect(status().isBadRequest());
+        user = userRepository.findByEmail(user1.getEmail());
         assertThat(user).isEmpty();
 
-        mockMvc.perform(post("/api/users"))
+        mockMvc.perform(post(rootURI))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void updateTest() {
+    public void testUpdate() {
 
     }
 
     @Test
-    public void deleteTest() {
+    public void testDelete() {
 
     }
 }
