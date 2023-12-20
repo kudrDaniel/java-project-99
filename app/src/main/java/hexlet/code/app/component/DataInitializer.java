@@ -1,9 +1,9 @@
 package hexlet.code.app.component;
 
-import hexlet.code.app.dto.TaskStatusCreateDTO;
-import hexlet.code.app.dto.UserCreateDTO;
-import hexlet.code.app.service.TaskStatusService;
-import hexlet.code.app.service.UserService;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.model.User;
+import hexlet.code.app.repository.TaskStatusRepository;
+import hexlet.code.app.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -16,10 +16,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
     @Autowired
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    private final TaskStatusService taskStatusService;
+    private final TaskStatusRepository taskStatusRepository;
 
     @Autowired
     private final DefaultAuthProperties auths;
@@ -31,19 +31,22 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initUsers() {
-        var userData = new UserCreateDTO();
-        userData.setEmail(auths.getEmail());
-        userData.setPassword(auths.getPassword());
-        userService.create(userData);
+        if (userRepository.existByEmail(auths.getEmail())) {
+            return;
+        }
+        var user = new User();
+        user.setEmail(auths.getEmail());
+        user.setPassword(auths.getPassword());
+        userRepository.save(user);
     }
 
     private void initTaskStatuses() {
-        Map<String, TaskStatusCreateDTO> taskStatusMap = Map.of(
-                "draft", new TaskStatusCreateDTO(),
-                "to_review", new TaskStatusCreateDTO(),
-                "to_be_fixed", new TaskStatusCreateDTO(),
-                "to_publish", new TaskStatusCreateDTO(),
-                "published", new TaskStatusCreateDTO()
+        Map<String, TaskStatus> taskStatusMap = Map.of(
+                "draft", new TaskStatus(),
+                "to_review", new TaskStatus(),
+                "to_be_fixed", new TaskStatus(),
+                "to_publish", new TaskStatus(),
+                "published", new TaskStatus()
         );
         taskStatusMap.entrySet().stream()
                 .map(entry -> {
@@ -52,6 +55,11 @@ public class DataInitializer implements ApplicationRunner {
                     taskStatus.setSlug(entry.getKey());
                     return taskStatus;
                 })
-                .forEach(taskStatusService::create);
+                .filter(element -> {
+                    var nameCond = taskStatusRepository.existsByName(element.getName());
+                    var slugCond = taskStatusRepository.existsBySlug(element.getSlug());
+                    return !(nameCond || slugCond);
+                })
+                .forEach(taskStatusRepository::save);
     }
 }
