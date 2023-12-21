@@ -1,16 +1,16 @@
 package hexlet.code.app.model;
 
-import hexlet.code.app.exception.RemovalConflictException;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PreRemove;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,34 +22,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "tasks")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class TaskStatus implements BaseEntity {
+public class Task implements BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @NotBlank
     private String name;
 
-    @Column(unique = true)
-    private String slug;
+    private Integer index;
 
-    @OneToMany(mappedBy = "taskStatus", cascade = CascadeType.ALL)
-    private List<Task> tasks = new ArrayList<>();
+    private String description;
+
+    @NotNull
+    @ManyToOne
+    private TaskStatus taskStatus;
+
+    @ManyToOne
+    private User assignee;
+
+    @ManyToMany(cascade = {
+        CascadeType.MERGE,
+        CascadeType.REFRESH
+    })
+    private List<Label> labels = new ArrayList<>();
 
     @CreatedDate
     private LocalDate createdAt;
 
     @LastModifiedDate
     private LocalDate updatedAt;
-
-    @PreRemove
-    public void checkTasksAssociationBeforeRemoval() {
-        if (!tasks.isEmpty()) {
-            throw new RemovalConflictException(TaskStatus.class, Task.class);
-        }
-    }
 }

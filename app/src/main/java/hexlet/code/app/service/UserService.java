@@ -3,15 +3,19 @@ package hexlet.code.app.service;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
-import hexlet.code.app.exception.EmailAlreadyExistException;
+import hexlet.code.app.exception.ResourceAlreadyExistException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -20,6 +24,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private UserUtils userUtils;
 
     public List<UserDTO> findAll() {
         var models = userRepository.findAll();
@@ -36,7 +43,7 @@ public class UserService {
 
     public UserDTO create(UserCreateDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new EmailAlreadyExistException(dto.getEmail());
+            throw new ResourceAlreadyExistException(User.class, Map.of("email", dto.getEmail()));
         }
         var model = userMapper.map(dto);
         userRepository.save(model);
@@ -44,6 +51,9 @@ public class UserService {
     }
 
     public UserDTO update(UserUpdateDTO dto, Long id) {
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), id)) {
+            throw new AccessDeniedException("Access denied to update user with id:" + id);
+        }
         var model = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
         userMapper.update(dto, model);
@@ -52,6 +62,9 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), id)) {
+            throw new AccessDeniedException("Access denied to update user with id:" + id);
+        }
         userRepository.deleteById(id);
     }
 }

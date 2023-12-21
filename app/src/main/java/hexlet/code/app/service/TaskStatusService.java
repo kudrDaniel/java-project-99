@@ -3,8 +3,8 @@ package hexlet.code.app.service;
 import hexlet.code.app.dto.TaskStatusCreateDTO;
 import hexlet.code.app.dto.TaskStatusDTO;
 import hexlet.code.app.dto.TaskStatusUpdateDTO;
+import hexlet.code.app.exception.ResourceAlreadyExistException;
 import hexlet.code.app.exception.ResourceNotFoundException;
-import hexlet.code.app.exception.TaskStatusAlreadyExistException;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
@@ -44,7 +44,7 @@ public class TaskStatusService {
             fields.put("slug", dto.getSlug());
         }
         if (!fields.isEmpty()) {
-            throw new TaskStatusAlreadyExistException(fields);
+            throw new ResourceAlreadyExistException(TaskStatus.class, fields);
         }
 
         var model = taskStatusMapper.map(dto);
@@ -66,7 +66,7 @@ public class TaskStatusService {
             fields.put("slug", dto.getSlug().get());
         }
         if (!fields.isEmpty()) {
-            throw new TaskStatusAlreadyExistException(fields);
+            throw new ResourceAlreadyExistException(TaskStatus.class, fields);
         }
 
         taskStatusMapper.update(dto, model);

@@ -1,5 +1,6 @@
 package hexlet.code.app.exception;
 
+import hexlet.code.app.model.BaseEntity;
 import lombok.Getter;
 
 import java.util.Map;
@@ -8,11 +9,11 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Getter
-public class TaskStatusAlreadyExistException extends RuntimeException {
+public class ResourceAlreadyExistException extends RuntimeException {
     private final Map<String, String> fields;
 
-    public TaskStatusAlreadyExistException(Map<String, String> fields) {
-        super(format("Task status with [%s] already exist", prepareMessage(fields)));
+    public ResourceAlreadyExistException(Class<? extends BaseEntity> entityClass, Map<String, String> fields) {
+        super(format("%s with [%s] already exist", entityClass.getSimpleName(), prepareMessage(fields)));
         this.fields = Map.copyOf(fields);
     }
 

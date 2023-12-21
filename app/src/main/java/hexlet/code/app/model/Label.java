@@ -8,9 +8,10 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,22 +23,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "labels")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class TaskStatus implements BaseEntity {
+public class Label implements BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
+    @Size(min = 3, max = 1000)
     private String name;
 
-    @Column(unique = true)
-    private String slug;
-
-    @OneToMany(mappedBy = "taskStatus", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "labels", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 
     @CreatedDate
@@ -49,7 +48,7 @@ public class TaskStatus implements BaseEntity {
     @PreRemove
     public void checkTasksAssociationBeforeRemoval() {
         if (!tasks.isEmpty()) {
-            throw new RemovalConflictException(TaskStatus.class, Task.class);
+            throw new RemovalConflictException(Label.class, Task.class);
         }
     }
 }

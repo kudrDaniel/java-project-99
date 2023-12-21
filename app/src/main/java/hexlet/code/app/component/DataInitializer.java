@@ -1,7 +1,9 @@
 package hexlet.code.app.component;
 
+import hexlet.code.app.model.Label;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.model.User;
+import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,9 @@ public class DataInitializer implements ApplicationRunner {
     private final TaskStatusRepository taskStatusRepository;
 
     @Autowired
+    private final LabelRepository labelRepository;
+
+    @Autowired
     private final DefaultAuthProperties auths;
 
     @Autowired
@@ -32,6 +37,7 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         initUsers();
         initTaskStatuses();
+        initLabels();
     }
 
     private void initUsers() {
@@ -65,6 +71,23 @@ public class DataInitializer implements ApplicationRunner {
                     var slugCond = taskStatusRepository.existsBySlug(element.getSlug());
                     return !(nameCond || slugCond);
                 })
+                .sorted(((o1, o2) -> o1.getName().compareTo(o2.getName())))
                 .forEach(taskStatusRepository::save);
+    }
+
+    private void initLabels() {
+        Map<String, Label> labelMap = Map.of(
+                "bug", new Label(),
+                "feature", new Label()
+        );
+        labelMap.entrySet().stream()
+                .map(entry -> {
+                    var label = entry.getValue();
+                    label.setName(entry.getKey());
+                    return label;
+                })
+                .filter(element -> !labelRepository.existsByName(element.getName()))
+                .sorted(((o1, o2) -> o1.getName().compareTo(o2.getName())))
+                .forEach(labelRepository::save);
     }
 }

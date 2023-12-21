@@ -1,6 +1,7 @@
 package hexlet.code.app.handler;
 
-import hexlet.code.app.exception.EmailAlreadyExistException;
+import hexlet.code.app.exception.RemovalConflictException;
+import hexlet.code.app.exception.ResourceAlreadyExistException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleResourceBadRequestException(ConstraintViolationException ex) {
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(EmailAlreadyExistException.class)
-    public ResponseEntity<String> handleEmailAlreadyExistException(EmailAlreadyExistException ex) {
+    @ExceptionHandler(ResourceAlreadyExistException.class)
+    public ResponseEntity<String> handleResourceAlreadyExistException(ResourceAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RemovalConflictException.class)
+    public ResponseEntity<String> handleRemovalConflictException(RemovalConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }
