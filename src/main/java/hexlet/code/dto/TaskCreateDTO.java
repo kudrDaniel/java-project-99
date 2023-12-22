@@ -21,7 +21,6 @@ public class TaskCreateDTO {
     @NotBlank
     private String status;
 
-    @NotNull
     @JsonProperty("assignee_id")
     private Long assigneeId;
 
