@@ -31,9 +31,17 @@ jobs:
       with:
         filters: |
           src:
-            - './app/**'
+            - './config/**'
+            - './gradle/**'
+            - './src/**'
             - './.gitignore'
+            - './build.gradle'
+            - './Dockerfile'
+            - './gradlew'
+            - './gradlew.bat'
             - './Makefile'
+            - './.gitignore'
+            - './settings.gradle'
   build:
     name: Build and make test coverage report
     needs: filtering
