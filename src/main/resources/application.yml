@@ -6,9 +6,6 @@ logging:
         # web: DEBUG
         security: DEBUG
 
-sentry:
-  dsn: ""
-
 spring:
   jpa:
     show-sql: true
