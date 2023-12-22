@@ -48,6 +48,8 @@ jobs:
         distribution: 'oracle'
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.7.0
+      env:
+           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
       with:
           arguments: build
           build-root-directory: app
@@ -62,5 +64,5 @@ jobs:
     - name: Deploy
       if: github.ref == 'refs/heads/main'
       env:
-           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+            deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
       run: curl "$deploy_url"
