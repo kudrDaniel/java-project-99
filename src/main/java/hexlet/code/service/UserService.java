@@ -37,7 +37,7 @@ public class UserService {
 
     public UserDTO findById(Long id) {
         var model = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", id));
         return userMapper.map(model);
     }
 
@@ -55,7 +55,7 @@ public class UserService {
             throw new AccessDeniedException("Access denied to update user with id:" + id);
         }
         var model = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", id));
         userMapper.update(dto, model);
         userRepository.save(model);
         return userMapper.map(model);

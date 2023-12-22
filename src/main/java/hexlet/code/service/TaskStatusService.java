@@ -31,7 +31,7 @@ public class TaskStatusService {
 
     public TaskStatusDTO findById(Long id) {
         var model = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, id));
+                .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, "id", id));
         return taskStatusMapper.map(model);
     }
 
@@ -54,7 +54,7 @@ public class TaskStatusService {
 
     public TaskStatusDTO update(TaskStatusUpdateDTO dto, Long id) {
         var model = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, id));
+                .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, "id", id));
 
         var fields = new HashMap<String, String>();
         if (!model.getName().equals(dto.getName().get())

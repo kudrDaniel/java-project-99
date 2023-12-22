@@ -45,10 +45,7 @@ public class Task implements BaseEntity {
     @ManyToOne(cascade = CascadeType.MERGE)
     private User assignee;
 
-    @ManyToMany(cascade = {
-        CascadeType.MERGE,
-        CascadeType.REFRESH
-    })
+    @ManyToMany(cascade = CascadeType.MERGE)
     private Set<Label> labels = new HashSet<>();
 
     @CreatedDate

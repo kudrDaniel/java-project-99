@@ -31,7 +31,7 @@ public class LabelService {
 
     public LabelDTO findById(Long id) {
         var model = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Label.class, id));
+                .orElseThrow(() -> new ResourceNotFoundException(Label.class, "id", id));
         return labelMapper.map(model);
     }
 
@@ -47,10 +47,10 @@ public class LabelService {
 
     public LabelDTO update(LabelUpdateDTO dto, Long id) {
         var model = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Label.class, id));
+                .orElseThrow(() -> new ResourceNotFoundException(Label.class, "id", id));
 
-        if (labelRepository.existsByName(dto.getName())) {
-            throw new ResourceAlreadyExistException(Label.class, Map.of("name", dto.getName()));
+        if (labelRepository.existsByName(dto.getName().get())) {
+            throw new ResourceAlreadyExistException(Label.class, Map.of("name", dto.getName().get()));
         }
 
         labelMapper.update(dto, model);

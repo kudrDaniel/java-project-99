@@ -12,7 +12,6 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -31,21 +30,21 @@ public abstract class TaskMapper {
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "taskStatus.name", source = "status")
+    @Mapping(target = "taskStatus.slug", source = "status")
     @Mapping(target = "assignee.id", source = "assigneeId")
     @Mapping(target = "labels", source = "taskLabelIds")
     public abstract Task map(TaskCreateDTO dto);
 
     @Mapping(target = "title", source = "name")
     @Mapping(target = "content", source = "description")
-    @Mapping(target = "status", source = "taskStatus.name")
+    @Mapping(target = "status", source = "taskStatus.slug")
     @Mapping(target = "assigneeId", source = "assignee.id")
     @Mapping(target = "taskLabelIds", source = "labels")
     public abstract TaskDTO map(Task model);
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "taskStatus.name", source = "status")
+    @Mapping(target = "taskStatus.slug", source = "status")
     @Mapping(target = "assignee.id", source = "assigneeId")
     @Mapping(target = "labels", source = "taskLabelIds")
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
@@ -56,12 +55,9 @@ public abstract class TaskMapper {
                 .toList();
     }
 
-    public Set<Label> map(JsonNullable<List<Long>> ids) {
-        if (ids.isPresent()) {
-            return ids.get().stream()
-                    .map(id -> entityManager.find(Label.class, id))
-                    .collect(Collectors.toSet());
-        }
-        return null;
+    public Set<Label> map(List<Long> ids) {
+        return ids.stream()
+                .map(id -> entityManager.find(Label.class, id))
+                .collect(Collectors.toSet());
     }
 }

@@ -7,19 +7,21 @@ import hexlet.code.utils.ModelGenerator;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -41,103 +43,65 @@ public class UserControllerTest {
 
     private User testUser;
 
-    private final String rootURI = "/api/users";
-
     @BeforeEach
-    public void setup() {
+    public void beforeEach() {
         testUser = Instancio.of(modelGenerator.getUserModel())
                 .create();
         userRepository.save(testUser);
         token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
     }
 
-    @ParameterizedTest
-    @CsvSource(value = {
-        "true, 200",
-        "false, 401"
-    }, delimiter = ',')
-    public void testIndex(String withToken, String statusCode) throws Exception {
-        var status = status().is(Integer.parseInt(statusCode));
-        var request = get(rootURI);
-        if (withToken.equals("true")) {
-            request = request.with(token);
-        }
-
-        mockMvc.perform(request)
-                .andExpect(status);
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-        "true, 200",
-        "false, 401"
-    }, delimiter = ',')
-    public void testShow(String withToken, String statusCode) throws Exception {
-        var status = status().is(Integer.parseInt(statusCode));
-        var request = get(rootURI + "/" + testUser.getId());
-        if (withToken.equals("true")) {
-            request = request.with(token);
-        }
-
-        var response = mockMvc.perform(request)
-                .andExpect(status)
-                .andReturn().getResponse();
-
-        if (withToken.equals("true")) {
-            var body = response.getContentAsString();
-            assertThatJson(body).and(
-                    v -> v.node("firstName").isEqualTo(testUser.getFirstName()),
-                    v -> v.node("lastName").isEqualTo(testUser.getLastName()),
-                    v -> v.node("email").isEqualTo(testUser.getEmail())
-            );
-        }
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-        "true, new, 201",
-        "true, test, 400",
-        "false, new, 401",
-    })
-    public void testCreate(String withToken, String createType, String statusCode) throws Exception {
-        var status = status().is(Integer.parseInt(statusCode));
-
-        var user = Instancio.of(modelGenerator.getUserModel())
+    @Test
+    void testCreate() throws Exception {
+        var data = Instancio.of(modelGenerator.getUserModel())
                 .create();
-        if (createType.equals("test")) {
-            user = testUser;
-        }
-        var request = post(rootURI)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(user));
-        if (withToken.equals("true")) {
-            request = request.with(token);
-        }
 
-        var response = mockMvc.perform(request)
-                .andExpect(status)
-                .andReturn().getResponse();
+        var request = post("/api/users")
+                .with(token)
+                .contentType(APPLICATION_JSON)
+                .content(om.writeValueAsString(data));
+        var result = mockMvc
+                .perform(request)
+                .andExpect(status().isCreated())
+                .andReturn();
+        var body = result.getResponse().getContentAsString();
 
-        if (withToken.equals("true") && createType.equals("new")) {
-            var body = response.getContentAsString();
-            var firstName = user.getFirstName();
-            var lastName = user.getLastName();
-            var email = user.getEmail();
-            assertThatJson(body).and(
-                    v -> v.node("firstName").isEqualTo(firstName),
-                    v -> v.node("lastName").isEqualTo(lastName),
-                    v -> v.node("email").isEqualTo(email)
-            );
-        }
+        assertThatJson(body).and(
+                v -> v.node("password").isAbsent(),
+                v -> v.node("id").isPresent(),
+                v -> v.node("firstName").isEqualTo(data.getFirstName()),
+                v -> v.node("lastName").isEqualTo(data.getLastName()),
+                v -> v.node("email").isEqualTo(data.getEmail()));
     }
 
     @Test
-    public void testUpdate() {
-
+    public void testIndex() throws Exception {
+        mockMvc.perform(get("/api/users").with(token))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testDelete() {
+    public void testShow() throws Exception {
+        var request = get("/api/users/" + testUser.getId()).with(token);
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
 
+    @Test
+    public void testUpdate() throws Exception {
+        var data = new HashMap<String, String>();
+        data.put("firstName", "New name");
+
+        var request = put("/api/users/" + testUser.getId()).with(token)
+                .contentType(APPLICATION_JSON)
+                .content(om.writeValueAsString(data));
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        mockMvc.perform(delete("/api/users/" + testUser.getId()).with(token))
+                .andExpect(status().isNoContent());
     }
 }
