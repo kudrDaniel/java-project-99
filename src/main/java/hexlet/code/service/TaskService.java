@@ -15,6 +15,7 @@ import hexlet.code.specification.TaskSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -53,7 +54,7 @@ public class TaskService {
         var taskStatusModel = taskStatusRepository.findBySlug(dto.getStatus())
                 .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, "name", dto.getStatus()));
         taskModel.setTaskStatus(taskStatusModel);
-        var labelModels = labelRepository.findAllById(dto.getTaskLabelIds());
+        var labelModels = new HashSet<>(labelRepository.findAllById(dto.getTaskLabelIds()));
         taskModel.setLabels(labelModels);
         taskRepository.save(taskModel);
         return taskMapper.map(taskModel);
@@ -70,7 +71,7 @@ public class TaskService {
         }
         if (dto.getTaskLabelIds().isPresent()) {
             var labelIds = dto.getTaskLabelIds().get();
-            var labelModels = labelRepository.findAllById(labelIds);
+            var labelModels = new HashSet<>(labelRepository.findAllById(labelIds));
             taskModel.setLabels(labelModels);
         }
         taskMapper.update(dto, taskModel);

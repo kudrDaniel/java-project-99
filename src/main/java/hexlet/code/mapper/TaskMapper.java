@@ -16,6 +16,8 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(
         uses = {JsonNullableMapper.class, ReferenceMapper.class},
@@ -48,17 +50,17 @@ public abstract class TaskMapper {
     @Mapping(target = "labels", source = "taskLabelIds")
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
 
-    public List<Long> map(List<Label> models) {
+    public List<Long> map(Set<Label> models) {
         return models.stream()
                 .map(Label::getId)
                 .toList();
     }
 
-    public List<Label> map(JsonNullable<List<Long>> ids) {
+    public Set<Label> map(JsonNullable<List<Long>> ids) {
         if (ids.isPresent()) {
             return ids.get().stream()
                     .map(id -> entityManager.find(Label.class, id))
-                    .toList();
+                    .collect(Collectors.toSet());
         }
         return null;
     }
