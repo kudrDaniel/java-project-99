@@ -39,10 +39,10 @@ public class Task implements BaseEntity {
     private String description;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private TaskStatus taskStatus;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User assignee;
 
     @ManyToMany(cascade = {

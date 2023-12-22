@@ -46,10 +46,7 @@ public class User implements BaseEntity, UserDetails {
 
     private String password;
 
-    @OneToMany(mappedBy = "assignee", cascade = {
-        CascadeType.MERGE,
-        CascadeType.REFRESH
-    })
+    @OneToMany(mappedBy = "assignee", cascade = CascadeType.MERGE)
     private List<Task> tasks = new ArrayList<>();
 
     @CreatedDate
