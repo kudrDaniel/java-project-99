@@ -7,7 +7,3 @@ spring:
 rsa:
   public-key: classpath:certs/public.pem
   private-key: classpath:certs/private.pem
-
-defauth:
-  email: "hexlet@example.com"
-  password: "qwerty"

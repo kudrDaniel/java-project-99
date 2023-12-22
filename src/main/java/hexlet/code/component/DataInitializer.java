@@ -41,12 +41,14 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initUsers() {
-        if (userRepository.existsByEmail(auths.getEmail())) {
+        var email = auths.getEmail() == null ? "hexlet@example.com" : auths.getEmail();
+        var password = auths.getPassword() == null ? "qwerty" : auths.getEmail();
+        if (userRepository.existsByEmail(email)) {
             return;
         }
         var user = new User();
-        user.setEmail(auths.getEmail());
-        var hashedPassword = passwordEncoder.encode(auths.getPassword());
+        user.setEmail(email);
+        var hashedPassword = passwordEncoder.encode(password);
         user.setPassword(hashedPassword);
         userRepository.save(user);
     }

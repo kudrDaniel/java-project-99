@@ -1,7 +1,6 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.component.DefaultAuthProperties;
 import hexlet.code.dto.AuthRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,16 +22,13 @@ public class AuthenticationControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private DefaultAuthProperties auth;
-
-    @Autowired
     private ObjectMapper om;
 
     @Test
     public void loginOkTest() throws Exception {
         var data = new AuthRequest();
-        data.setUsername(auth.getEmail());
-        data.setPassword(auth.getPassword());
+        data.setUsername("hexlet@example.com");
+        data.setPassword("qwerty");
 
         var request = post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
