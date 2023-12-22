@@ -1,34 +1,46 @@
+ifdef OS
+	APP_DIST = build\install\app\bin\app
+	GRADLEW_DIST = gradlew
+else
+	ifeq ($(shell uname), Linux)
+	APP_DIST = ./build/install/app/bin/app
+	GRADLEW_DIST =./gradlew
+	endif
+endif
+
 .DEFAULT_GOAL := build-run
 
 clean:
-	make -C app clean
+	$(GRADLEW_DIST) clean
 
 build:
-	make -C app build
+	$(GRADLEW_DIST) clean build
 
 install:
-	make -C app install
+	$(GRADLEW_DIST) clean install
 
 run-dist:
-	make -C run-dist
+	$(APP_DIST)
 
 run:
-	make -C app run
+	$(GRADLEW_DIST) --console plain jshell
 
 test:
-	make -C app test
+	$(GRADLEW_DIST) test
 
 report:
-	make -C app report
+	$(GRADLEW_DIST) jacocoTestReport
 
 lint:
-	make -C app lint
+	$(GRADLEW_DIST) checkstyleMain checkstyleTest
 
 update-deps:
-	make -C app update-deps
+	$(GRADLEW_DIST) useLatestVersions
 
 mk-gradlew-exec:
-	make -C app mk-gradlew-exec
+	git update-index --chmod=+x gradlew
+	git commit -m "Make gradlew executable"
+	git push
 
 
 build-run: build run
