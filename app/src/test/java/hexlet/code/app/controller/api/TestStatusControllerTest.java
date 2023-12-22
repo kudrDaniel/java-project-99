@@ -59,7 +59,7 @@ public class TestStatusControllerTest {
         testTaskStatusCreateDTO.setName(testTaskStatus.getName());
         testTaskStatusCreateDTO.setSlug(testTaskStatus.getSlug());
         taskStatusRepository.save(taskStatusMapper.map(testTaskStatusCreateDTO));
-        testTaskStatus = taskStatusRepository.findByName(testTaskStatus.getName()).get();
+        testTaskStatus = taskStatusRepository.findBySlug(testTaskStatus.getName()).get();
     }
 
     @Test

@@ -2,6 +2,7 @@ package hexlet.code.app.service;
 
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskDTO;
+import hexlet.code.app.dto.TaskParamsDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.TaskMapper;
@@ -10,7 +11,11 @@ import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
+import hexlet.code.app.specification.TaskSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,10 +32,14 @@ public class TaskService {
     private LabelRepository labelRepository;
 
     @Autowired
+    private TaskSpecification specBuilder;
+
+    @Autowired
     private TaskMapper taskMapper;
 
-    public List<TaskDTO> findAll() {
-        var models = taskRepository.findAll();
+    public List<TaskDTO> findAll(TaskParamsDTO params) {
+        var spec = specBuilder.build(params);
+        var models = taskRepository.findAll(spec);
         return models.stream()
                 .map(taskMapper::map)
                 .toList();
@@ -44,7 +53,7 @@ public class TaskService {
 
     public TaskDTO create(TaskCreateDTO dto) {
         var taskModel = taskMapper.map(dto);
-        var taskStatusModel = taskStatusRepository.findByName(dto.getStatus())
+        var taskStatusModel = taskStatusRepository.findBySlug(dto.getStatus())
                 .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, "name", dto.getStatus()));
         taskModel.setTaskStatus(taskStatusModel);
         var labelModels = labelRepository.findAllById(dto.getTaskLabelIds());
@@ -58,7 +67,7 @@ public class TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
         if (dto.getStatus().isPresent()) {
             var taskStatusName = dto.getStatus().get();
-            var taskStatusModel = taskStatusRepository.findByName(taskStatusName)
+            var taskStatusModel = taskStatusRepository.findBySlug(taskStatusName)
                     .orElseThrow(() -> new ResourceNotFoundException(TaskStatus.class, "name", taskStatusName));
             taskModel.setTaskStatus(taskStatusModel);
         }

@@ -6,6 +6,12 @@ logging:
         # web: DEBUG
         security: DEBUG
 
+sentry:
+  dsn: https://0988e0209010fd0db9bb81502be00429@o4506435337912320.ingest.sentry.io/4506438183157760
+  # Set traces-sample-rate to 1.0 to capture 100% of transactions for performance monitoring.
+  # We recommend adjusting this value in production.
+  traces-sample-rate: 1.0
+
 spring:
   jpa:
     show-sql: true

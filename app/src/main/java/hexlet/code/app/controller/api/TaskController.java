@@ -2,6 +2,7 @@ package hexlet.code.app.controller.api;
 
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskDTO;
+import hexlet.code.app.dto.TaskParamsDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.service.TaskService;
 import jakarta.validation.Valid;
@@ -27,8 +28,8 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping("")
-    public ResponseEntity<List<TaskDTO>> index() {
-        var tasks = taskService.findAll();
+    public ResponseEntity<List<TaskDTO>> index(TaskParamsDTO params) {
+        var tasks = taskService.findAll(params);
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(tasks.size()))
                 .body(tasks);

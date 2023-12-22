@@ -5,6 +5,9 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+sentry:
+  exception-resolver-order: -2147483647
+
 rsa:
   public-key: ${RSA_PUBLIC}
   private-key: ${RSA_PRIVATE}
