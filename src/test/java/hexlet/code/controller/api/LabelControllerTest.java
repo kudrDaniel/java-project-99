@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.mapper.LabelMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.LabelRepository;
-import hexlet.code.controller.utils.ModelGenerator;
+import hexlet.code.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -36,7 +36,10 @@ public class Label implements BaseEntity {
     @Size(min = 3, max = 1000)
     private String name;
 
-    @ManyToMany(mappedBy = "labels", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "labels", cascade = {
+        CascadeType.MERGE,
+        CascadeType.REFRESH
+    })
     private List<Task> tasks = new ArrayList<>();
 
     @CreatedDate

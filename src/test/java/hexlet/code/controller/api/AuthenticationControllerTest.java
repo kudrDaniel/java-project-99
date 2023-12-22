@@ -42,11 +42,11 @@ public class AuthenticationControllerTest {
     }
 
     @ParameterizedTest()
-    @CsvSource(delimiter = ':', value = {
-        ":",
-        "somebody@wants.told.me:the world is gonna roll me",
-        "hexlet@example.com:asdfg"
-    })
+    @CsvSource(value = {
+        ",",
+        "somebody@wants.told.me, the world is gonna roll me",
+        "hexlet@example.com, asdfg"
+    }, delimiter = ',')
     public void loginInvalidDataTest(String email, String password) throws Exception {
         var data = new AuthRequest();
         data.setUsername(email);
