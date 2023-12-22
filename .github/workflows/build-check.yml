@@ -68,7 +68,7 @@ jobs:
            JACOCO_SOURCE_PATH: ./src/main/java
       with:
            coverageCommand: make report
-           coverageLocations: ${{github.workspace}}/app/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
+           coverageLocations: ${{github.workspace}}/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
     - name: Deploy
       if: github.ref == 'refs/heads/main'
       env:
