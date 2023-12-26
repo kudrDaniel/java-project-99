@@ -16,3 +16,7 @@ spring:
       enabled: always
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:development}
+
+defauth:
+  email: ${ADMIN_EMAIL:"hexlet@example.com"}
+  password: ${ADMIN_PASS:"qwerty"}

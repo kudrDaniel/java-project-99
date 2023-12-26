@@ -57,7 +57,12 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.7.0
       env:
+           SPRING_PROFILES_ACTIVE: ${{vars.SPRING_PROFILES_ACTIVE}}
            SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+           ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
+           ADMIN_PASS: ${{secrets.ADMIN_PASS}}
+           RSA_PRIVATE: ${{secrets.RSA_PRIVATE}}
+           RSA_PUBLIC: ${{secrets.RSA_PUBLIC}}
       with:
           arguments: build
           build-root-directory: ./

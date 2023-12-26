@@ -14,7 +14,3 @@ sentry:
 rsa:
   public-key: ${RSA_PUBLIC}
   private-key: ${RSA_PRIVATE}
-
-defauth:
-  email: ${ADMIN_EMAIL}
-  password: ${ADMIN_PASS}
