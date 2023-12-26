@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class AppApplication {
     public static void main(String[] args) {
-        System.out.println(System.getenv("RSA_PUBLIC"));
         SpringApplication.run(AppApplication.class, args);
     }
 

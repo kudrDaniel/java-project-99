@@ -54,6 +54,15 @@ jobs:
       with:
         java-version: '20.0.2'
         distribution: 'oracle'
+    - name: Test envs
+      env:
+        SPRING_PROFILES_ACTIVE: ${{vars.SPRING_PROFILES_ACTIVE}}
+        SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+        ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
+        ADMIN_PASS: ${{secrets.ADMIN_PASS}}
+        RSA_PRIVATE: ${{secrets.RSA_PRIVATE}}
+        RSA_PUBLIC: ${{secrets.RSA_PUBLIC}}
+      run: echo "${{env.SPRING_PROFILES_ACTIVE}} ${{secrets.RSA_PUBLIC}}"
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.7.0
       env:
@@ -66,15 +75,6 @@ jobs:
       with:
           arguments: build
           build-root-directory: ./
-    - name: Build with Gradle
-      env:
-        SPRING_PROFILES_ACTIVE: ${{vars.SPRING_PROFILES_ACTIVE}}
-        SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
-        ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
-        ADMIN_PASS: ${{secrets.ADMIN_PASS}}
-        RSA_PRIVATE: ${{secrets.RSA_PRIVATE}}
-        RSA_PUBLIC: ${{secrets.RSA_PUBLIC}}
-      run: echo ${{env.SPRING_PROFILES_ACTIVE}}
     - name: Report test coverage to codeclimate
       uses: paambaati/codeclimate-action@v5.0.0
       env:
