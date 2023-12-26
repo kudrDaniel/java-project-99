@@ -17,6 +17,10 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:development}
 
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem
+
 defauth:
   email: ${ADMIN_EMAIL:hexlet@example.com}
   password: ${ADMIN_PASS:qwerty}

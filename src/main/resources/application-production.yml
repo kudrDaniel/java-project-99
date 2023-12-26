@@ -10,7 +10,3 @@ sentry:
   # We recommend adjusting this value in production.
   traces-sample-rate: 1.0
   exception-resolver-order: -2147483647
-
-rsa:
-  public-key: ${RSA_PUBLIC}
-  private-key: ${RSA_PRIVATE}

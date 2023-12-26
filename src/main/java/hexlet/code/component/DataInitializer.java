@@ -41,8 +41,8 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initUsers() {
-        var email = auths.getEmail();
-        var password = auths.getPassword();
+        var email = auths.getEmail() == null ? "hexlet@example.com" : auths.getEmail();
+        var password = auths.getPassword() == null ? "qwerty" : auths.getPassword();
         if (userRepository.existsByEmail(email)) {
             return;
         }
