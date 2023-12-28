@@ -28,7 +28,10 @@ This is a study project by student of [Hexlet](https://hexlet.io/)
 Just use Task Manager link on the last section
 
 ## :bulb:Using
-1. 'work in progress'
+1. Run the application
+1. Forward to localhost
+1. Enter login and password (for demonstration use hexlet@example.com - qwerty)
+1. Use!
 
 # :flags:Link
 Deployed [Task Manager](https://task-manager-qvl2.onrender.com) by [Render.com](https://render.com)
