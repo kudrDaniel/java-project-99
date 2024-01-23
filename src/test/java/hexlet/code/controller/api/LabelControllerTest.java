@@ -3,6 +3,7 @@ package hexlet.code.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
+import net.datafaker.Faker;
 import org.instancio.Instancio;
 import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -76,25 +77,41 @@ public class LabelControllerTest {
                 v -> v.node("name").isEqualTo(data.getName()));
 
         var label = labelRepository.findByName(data.getName());
-        assertNotNull(label.get());
+        assertThat(label).isNotEmpty();
     }
 
     @Test
     public void testUpdate() throws Exception {
         var data = Instancio.of(Label.class)
                 .ignore(Select.field(Label.class, "id"))
+                .supply(Select.field(Label.class, "name"), () -> new Faker().animal().name())
                 .create();
 
         var request = put("/api/labels/" + testLabel.getId()).with(jwt())
                 .contentType(APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
-        mockMvc.perform(request)
-                .andExpect(status().isOk());
+        var result = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+
+        assertThatJson(body).and(
+                v -> v.node("id").isEqualTo(testLabel.getId()),
+                v -> v.node("name").isEqualTo(data.getName())
+        );
+
+        var label = labelRepository.findByName(data.getName());
+        assertThat(label).isNotEmpty();
+        assertThat(label.get().getName()).isEqualTo(data.getName());
     }
 
     @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete("/api/labels/" + testLabel.getId()).with(jwt()))
                 .andExpect(status().isNoContent());
+
+        var label = labelRepository.findById(testLabel.getId());
+        assertThat(label).isEmpty();
     }
 }

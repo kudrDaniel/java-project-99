@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -102,8 +102,8 @@ public class TaskControllerTest {
                 v -> v.node("title").isPresent(),
                 v -> v.node("status").isEqualTo(data.get("status")));
 
-        var task = taskRepository.findByName(name).get();
-        assertNotNull(task);
+        var task = taskRepository.findByName(name);
+        assertThat(task).isNotEmpty();
     }
 
     @Test
@@ -117,11 +117,17 @@ public class TaskControllerTest {
                 .content(om.writeValueAsString(data));
         mockMvc.perform(request)
                 .andExpect(status().isOk());
+
+        var updatedTask = taskRepository.findById(testTask.getId()).get();
+        assertThat(updatedTask.getName()).isEqualTo(data.get("name")).isNotEqualTo(testTask.getName());
     }
 
     @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete("/api/tasks/" + testTask.getId()).with(jwt()))
                 .andExpect(status().isNoContent());
+
+        var deletedTask = taskRepository.findById(testTask.getId());
+        assertThat(deletedTask).isEmpty();
     }
 }

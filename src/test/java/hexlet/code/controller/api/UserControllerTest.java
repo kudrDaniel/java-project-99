@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -97,6 +98,11 @@ public class UserControllerTest {
                 .content(om.writeValueAsString(data));
         mockMvc.perform(request)
                 .andExpect(status().isOk());
+
+        var updatedUser = userRepository.findById(testUser.getId()).get();
+        assertThat(updatedUser.getFirstName()).isEqualTo(data.get("firstName")).isNotEqualTo(testUser.getFirstName());
+        assertThat(updatedUser.getLastName()).isEqualTo(testUser.getLastName());
+        assertThat(updatedUser.getEmail()).isEqualTo(testUser.getEmail());
     }
 
     @Test

@@ -1,10 +1,8 @@
 package hexlet.code.controller.api;
 
 import hexlet.code.dto.AuthRequest;
-import hexlet.code.repository.UserRepository;
 import hexlet.code.utils.JwtUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,16 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-@Slf4j
+@RequiredArgsConstructor
 public class AuthenticationController {
-    @Autowired
-    private JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)

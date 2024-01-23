@@ -3,21 +3,18 @@ package hexlet.code.utils;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
+@RequiredArgsConstructor
 public class JwtUtils {
-    @Autowired
-    private JwtEncoder encoder;
+    private final JwtEncoder encoder;
 
     public String generateToken(String username) {
-        log.debug("Generate token for:\"" + username + "\"");
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")

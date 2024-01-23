@@ -3,14 +3,14 @@ package hexlet.code.specification;
 import hexlet.code.dto.TaskParamsDTO;
 import hexlet.code.model.Task;
 import hexlet.code.repository.LabelRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class TaskSpecification {
-    @Autowired
-    private LabelRepository labelRepository;
+    private  final LabelRepository labelRepository;
 
     public Specification<Task> build(TaskParamsDTO params) {
         return withTitleCont(params.getTitleCont())
